@@ -1,0 +1,115 @@
+<h1>Schedule Activity</h1>
+<%= form_for @schedule do |form| %>
+
+	<p>
+	  <strong>Project:</strong>
+	  <%= form.hidden_field :project_id %>
+	  <%= link_to @project.name, @project %>
+	</p>
+
+	<p>
+	  <strong>Location:</strong>
+	  <%= form.collection_select :location_id, 
+	  								Location.all, 
+	  								:id, 
+	  								:name, 
+	  								{:include_blank => true}, {:class => 'schedule_option'} %>
+	</p>
+
+	<p>
+	  <strong>Time Slot:</strong>
+	  <%= form.collection_select :time_slot_id, TimeSlot.all, :id, :name, {:include_blank => true}, {:class => 'schedule_option'} %> NEEDS TO BE REQUIRED
+	</p>
+
+	<p>
+	  <strong>Activity:</strong>
+	  <%= form.collection_select :id, Activity.all, :id, :display_name, {:include_blank => true}, {:class => 'schedule_option'} %>
+	</p>
+
+	<div id='schedule_results' style="display:none">
+		<p>
+			Location: <span id='selected_location'></span>
+		</p>
+		<p>
+			Time Slot: <span id='selected_time_slot'></span>
+		</p>
+		<p>
+			Activity: <span id='selected_activity'></span>
+		</p>
+		<p>
+			Participants: <span id='activity_participants'></span>
+			This will be done later
+		</p>
+		<div id='conflict_resolution_messages'>
+		</div>
+	</div>
+
+	<button id='update_activity' type='button' onclick="submitSchedule()" disabled>Update Schedule</button>
+<% end %>
+
+<script>
+	//if any drop down changes
+		//get current schedule options
+		//pass to check for conflicts api
+		//get validations and either enable schedule button or show validation message
+
+	$(".schedule_option").on('change', function() {
+        var project_id = $('#activity_project_id').val();
+        var location_id = $('#activity_location_id').val();
+    	var location_text = $('#activity_location_id  option:selected').text();
+    	var time_slot_id = $('#activity_time_slot_id').val();
+    	var time_slot_text = $('#activity_time_slot_id  option:selected').text();
+    	var activity_id = $('#activity_id').val();
+    	var activity_text = $('#activity_id  option:selected').text();
+    	if(activity_id != ""){
+    		activity_parms = '&activity='+activity_id;
+    	}else{
+    		activity_parms = "";
+    	}
+    	$('#selected_location').html(location_text);
+    	$('#selected_time_slot').html(time_slot_text);
+    	$('#selected_activity').html(activity_text);
+    	$('#schedule_results').show();
+    	fetch('/check_conflicts?location='+location_id 
+    							+'&project='+project_id 
+    							+'&time_slot='+time_slot_id
+    							+activity_parms)
+			.then((response) => response.json())
+  			.then((data) => {
+  				console.log(data);
+    			if(!data['room_conflict']){
+    			 	$('#update_activity').prop('disabled', false);
+    			}else{
+    				$conflict_activity = JSON.parse(data['conflict_activity']);
+    				$conflict_string = "<a href='/activities/"+$conflict_activity[0].id+"'>"+$conflict_activity[0].name + "</a>";
+    				$('#conflict_resolution_messages').html("Room Conflict: " + data['room_conflict'] + "<br/>"
+    				+ "Conflicts with " + $conflict_string);
+    				$('#update_activity').prop('disabled', true);
+    			}
+  		});
+	});
+
+	function submitSchedule(){
+        var $location_id = $('#activity_location_id').val();
+    	var $time_slot_id = $('#activity_time_slot_id').val();
+    	var $activity_id = $('#activity_id').val();
+    	window.location.href = '/update_schedule?activity_id='+$activity_id
+    							+ '&location_id=' + $location_id
+    							+ '&time_slot_id=' + $time_slot_id;
+		// $.ajax({
+		//     url: "/update_schedule",
+		//     type: "get",
+		//     data: {activity_id: $activity_id},
+		//     success: function(resp){
+		//     	console.log(resp);
+		//     },
+		//     error: function(resp){
+		//     	console.log("error");
+		//     	console.log(resp);
+		//     }
+		// });
+
+    			
+  		
+	}
+</script>

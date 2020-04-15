@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Project:</strong>
+  <%= link_to @activity.project.name , @activity.project %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @activity.name %>
+</p>
+
+<%= link_to 'Edit Activity', edit_activity_path(@activity) %>
+<%= link_to 'Schedule Activity', schedule_activity_path(:project => @activity.project, :activity => @activity) %>
+<p>
+  <strong>Time Slot:</strong>
+  <% if @activity.time_slot_id != nil %>
+  	<%= link_to @activity.time_slot.name, @activity.time_slot %>
+  <% end %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <% if @activity.location_id != nil %>
+	<%= link_to @activity.location.name, @activity.location %>
+  <% end %>
+</p>
+
+

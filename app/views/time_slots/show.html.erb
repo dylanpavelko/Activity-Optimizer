@@ -1,0 +1,51 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Project:</strong>
+  <%= link_to @time_slot.project.name, @time_slot.project %>
+</p>
+
+<p>
+  <strong>Start:</strong>
+  <%= @time_slot.start.strftime("%I:%M %p %h-%d-%Y") %>
+</p>
+
+<p>
+  <strong>End:</strong>
+  <%= @time_slot.end.strftime("%I:%M %p %h-%d-%Y") %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @time_slot.name %>
+</p>
+
+<table border='1'>
+	<tr>
+		<th>Time Slot</th>
+		<th>Activity</th>
+	</tr>
+	<% @schedule.each do |l| %>
+		<tr>
+			<td><%= link_to l[0].name, l[0] %>
+			<td>
+				<% if l[1].size == 1 %>
+					<%= link_to l[1].first.name, l[1].first %>
+				<% elsif l[1].size > 1 %>
+					CONFLICTS
+					<% l[1].each do |activity| %>
+						<%= link_to activity.name, activity %>
+					<% end %>
+				<% else %>
+					<%= link_to 'Schedule Activity', schedule_activity_path(:project => @time_slot.project, :time_slot => @time_slot, :location => l[0]) %>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+</table>
+
+<br><br>
+ADD OVERLAPPING TIME SLOTS
+<br><br>
+
+<%= link_to 'Edit', edit_time_slot_path(@time_slot) %>

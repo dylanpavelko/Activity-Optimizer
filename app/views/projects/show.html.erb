@@ -1,0 +1,56 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @project.name %> <%= link_to 'Edit', edit_project_path(@project) %>
+</p>
+<p>
+	<%= link_to 'Manage Activities', activities_path %> 
+	<%= link_to 'Manage Participants', participants_path %> 
+</p>
+ 
+ <h3>Schedule</h3>
+<table border='1'>
+		<tr>
+			<th>Time Slots</th>
+			<% if @has_unlocated_activities %>
+				<th>Unlocated Activities</th>
+			<% end %>
+			<% @locations.each do |l| %>
+				<th><%= link_to l.name, l %></th>
+			<% end %>
+			<th><%= link_to '+', new_location_path(:project => @project) %></th>
+		</tr>
+	<% @schedule.each do |ts| %>
+		<tr>
+			<td><%= link_to ts[0].name, ts[0] %></td>
+			<% if @has_unlocated_activities %>
+				<td>
+					<% ts[2].each do |ula| %>
+						<%= link_to ula.name, ula %><br/>
+					<% end %>
+				</td>
+			<% end %>
+			<% ts[1].each do |a| %>
+				<td>
+					<% if a.size > 0 %>
+						<% a.each do |activity| %>
+							<%= link_to activity.name, activity %>
+						<% end %>
+					<% else %>
+						
+					<% end %>
+				</td>
+			<% end %>
+		<tr>
+	<% end %>
+	<tr><td><%= link_to '+', new_time_slot_path(:project => @project) %></td></tr>
+</table>
+<br/><br/>
+<h3>Unscheduled Activities</h3>
+<%= link_to 'Add New Activity', new_activity_path(:project => @project) %>
+<ul>
+	<% @unscheduled_activities.each do |a| %>
+		<li><%= link_to a.name, a %></li>
+	<% end %>
+</ul>

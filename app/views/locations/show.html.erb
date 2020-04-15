@@ -1,0 +1,37 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Project:</strong>
+  <%= link_to @location.project.name , @location.project %>
+</p>
+
+<p>
+  <strong>Location:</strong>
+  <%= @location.name %>
+</p>
+
+<table border='1'>
+	<tr>
+		<th>Time Slot</th>
+		<th>Activity</th>
+	</tr>
+	<% @schedule.each do |ts| %>
+		<tr>
+			<td><%= link_to ts[0].name, ts[0] %>
+			<td>
+				<% if ts[1].size == 1 %>
+					<%= link_to ts[1].first.name, ts[1].first %>
+				<% elsif ts[1].size > 1 %>
+					CONFLICTS
+					<% ts[1].each do |activity| %>
+						<%= link_to activity.name, activity %>
+					<% end %>
+				<% else %>
+					<%= link_to 'Schedule Activity', schedule_activity_path(:project => @location.project, :location => @location, :time_slot => ts[0]) %>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+</table>
+
+<%= link_to 'Edit', edit_location_path(@location) %>

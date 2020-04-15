@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  time_slot: one
+  location: one
+  project: one
+
+two:
+  name: MyString
+  time_slot: two
+  location: two
+  project: two
