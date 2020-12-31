@@ -1,11 +1,10 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>Project:</strong>
+  <strong><%= link_to 'Projects:', projects_path %></strong>
   <%= @project.name %> <%= link_to 'Edit', edit_project_path(@project) %>
 </p>
 <p>
-	<%= link_to 'Manage Activities', activities_path %> 
 	<%= link_to 'Manage Participants', participants_path %> 
 </p>
  
@@ -19,7 +18,14 @@
 			<% @locations.each do |l| %>
 				<th><%= link_to l.name, l %></th>
 			<% end %>
-			<th><%= link_to '+', new_location_path(:project => @project) %></th>
+			<th>
+				<% if @locations.size > 0 %>
+					<%= link_to '+', new_location_path(:project => @project) %>
+				<% else %>
+					<%= link_to '+ Location', new_location_path(:project => @project) %>
+				<% end %>
+					
+			</th>
 		</tr>
 	<% @schedule.each do |ts| %>
 		<tr>
